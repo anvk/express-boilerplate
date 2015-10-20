@@ -50,9 +50,6 @@ if (process.argv.length > 3) {
 }
 
 // output process pid into a file
-// This argument works ONLY for linux.
-// Adding this argument only because at the moment cannot retreive a proper pid for the process
-// Should be moved away in the future
 if (process.argv.length > 4) {
   fs.writeFile(process.argv[4], process.pid);
 }

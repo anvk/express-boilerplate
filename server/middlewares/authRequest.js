@@ -2,48 +2,41 @@
 
 /*global module, require*/
 
-var config = require('../../config/config.json');
+var jwt = require('jwt-simple'),
+    tokenConfig = require('../../config/config.json').token;
 
 module.exports = function(req, res, next) {
 
-  var validateToken = function(token) {
-    return config.apiKey == token;
-  };
-
-  // Do not check token if it is a ping method
-  if (req.baseUrl == config.apiPrefix + config.apiVersion + config.pingUrl
-        || req.baseUrl == config.apiPrefix + config.pingUrl) {
-    next(); // To move to next middleware
-    return;
-  }
-
-  var token = (req.body && req.body.access_token) ||
-              (req.query && req.query.access_token) ||
-              req.headers['x-access-token'];
+  var token = req.params.jwt || req.headers['x-access-token'];
 
   if (!token) {
     res.status(401);
-    res.json({
-      status: 401,
-      message: 'Invalid Token'
+    return res.json({
+      message: 'Token Required'
     });
-    return;
   }
 
+  // massage token here
   try {
-    // Authorize the user to see if s/he can access our resources
-    if (!validateToken(token)) {
-      res.status(403);
-      res.json({
-        status: 403,
-        message: 'Not Authorized'
-      });
-      return;
-    }
-
-    next(); // To move to next middleware
-
-  } catch (err) {
-    next(err); // To move to next error middleware
+    var payload = jwt.decode(token, tokenConfig.secret) || {};
+  } catch(e) {
+    res.status(401);
+    return res.json({
+      message: 'Token Expired'
+    });
   }
+
+  if (payload.expiry <= Date.now()) {
+    res.status(400);
+    return res.json({
+      message: 'Token Expired'
+    });
+  }
+
+  req.payload = {
+    // some payload here inside of request
+    // customerid: payload.customerid
+  };
+
+  next();
 };

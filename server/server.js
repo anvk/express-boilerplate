@@ -7,7 +7,6 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     routes = require('./routes'),
     config = require('../config/config.json'),
-    authRequest = require('./middlewares/authRequest.js'),
     allowCORSHandler = require('./middlewares/allowCORS.js'),
     notFoundRequest = require('./middlewares/notFound.js'),
     logErrorsHandler = require('./middlewares/logErrors.js'),
@@ -32,7 +31,6 @@ app.use(logger('common'));
 app.use(bodyParser.json());
 
 app.use('/*', allowCORSHandler);
-app.use(apiPrefix + '/*', authRequest);
 app.use([apiPrefix + apiVersion, apiPrefix], routes);
 app.use(notFoundRequest);
 

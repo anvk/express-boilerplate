@@ -5,6 +5,10 @@
   "apiVersion": "/v1",
   "apiKey": "SOME-KEY-HERE",
   "pingUrl": "/ping",
+  "token": {
+    "secret": "a2a1b8b7-0508-49d3-859a-8971492458c3",
+    "keeyAliveHours": 4
+  },
   "db": {
     "user": "USER",
     "password": "PASSWORD",

@@ -35,7 +35,7 @@ npm test
 ## Different branches:
 
 * master - web service with a static token (for private APIs)  
-* jwt - (TBD) web service with JWT tokens (for public APIs)  
+* jwt - web service with JWT tokens (for public APIs)  
 * access - (TBD) web service with custom Access and Read/Write permissions (for advanced public APIs)  
 
 ## License

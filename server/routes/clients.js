@@ -1,66 +1,54 @@
-'use strict';
+export function get(req, res, next) {
+  const error = false;
 
-/* global require, module */
-
-var clients = {
-  get: function(req, res, next) {
-    var error = false;
-
-    var data = [
-      {
-        _id: '1',
-        name: 'Alex'
-      },
-      {
-        _id: '2',
-        name: 'Oleksiy'
-      }
-    ];
-
-    if (error) {
-      return next(error);
+  const data = [
+    {
+      _id: '1',
+      name: 'Alex'
+    },
+    {
+      _id: '2',
+      name: 'Oleksiy'
     }
+  ];
 
-    res.status(200);
-    res.json(data);
-  },
+  if (error) {
+    return next(error);
+  }
 
-  create: function(req, res, next) {
-    var error = false;
+  res.status(200).json(data);
+}
 
-    var data = {
-      _id: '100'
-    };
+export function create(req, res, next) {
+  const error = false;
 
-    if (error) {
-      return next(error);
-    }
+  const data = {
+    _id: '100'
+  };
 
-    res.status(200);
-    res.json(data);
-  },
+  if (error) {
+    return next(error);
+  }
 
-  update: function(req, res, next) {
-    var error = false;
+  res.status(200).json(data);
+}
 
-    if (error) {
-      return next(error);
-    }
+export function update(req, res, next) {
+  const error = false;
 
-    res.status(200);
-    res.json();
-  },
+  if (error) {
+    return next(error);
+  }
 
-  delete: function(req, res, next) {
-    var error = false;
+  res.status(200).json();
+}
 
-    if (error) {
-      return next(error);
-    }
+export function remove(req, res, next) {
+  const error = false;
 
-    res.status(200);
-    res.json();
-  },
-};
+  if (error) {
+    return next(error);
+  }
 
-module.exports = clients;
+  res.status(200).json();
+}

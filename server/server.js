@@ -1,38 +1,46 @@
-'use strict';
+/* eslint no-console:0 */
 
-/* global require, process, console */
+import express from 'express';
+import logger from 'morgan';
+import bodyParser from 'body-parser';
+import routes from './routes/index.js';
+import fs from 'fs';
+import moment from 'moment';
+import consoleStamp from 'console-stamp';
+import * as config from './config/config.js';
+import authRequest from './middlewares/authRequest.js';
+import allowCORSHandler from './middlewares/allowCORS.js';
+import notFoundRequest from './middlewares/notFound.js';
+import logErrorsHandler from './middlewares/logErrors.js';
+import errorHandler from './middlewares/serverError.js';
 
-var express = require('express'),
-    logger = require('morgan'),
-    bodyParser = require('body-parser'),
-    routes = require('./routes'),
-    config = require('../config/config.json'),
-    authRequest = require('./middlewares/authRequest.js'),
-    allowCORSHandler = require('./middlewares/allowCORS.js'),
-    notFoundRequest = require('./middlewares/notFound.js'),
-    logErrorsHandler = require('./middlewares/logErrors.js'),
-    errorHandler = require('./middlewares/serverError.js'),
-    fs = require('fs'),
-    moment = require('moment'),
-    app = express(),
-    ip = config.ip || 'localhost',
-    port = config.port || 3000,
-    apiPrefix = config.apiPrefix || 'api',
-    apiVersion = config.apiVersion || 'v1';
+let { port = 3000 } = config;
+const PING = 'ping';
 
-require('console-stamp')(console, {
-  pattern: 'dd/mmm/yyyy:HH:MM:ss o'
-});
+const {
+  ip = 'localhost',
+  apiPrefix = 'api',
+  apiVersion = 'v1'
+} = config;
 
-logger.token('date', function() {
-  return moment().format('DD/MMM/YYYY:HH:mm:ss ZZ');
-});
+const app = express();
+
+consoleStamp(console, { pattern: 'dd/mmm/yyyy:HH:MM:ss o' });
+
+logger.token('date', () => moment().format('DD/MMM/YYYY:HH:mm:ss ZZ'));
 
 app.use(logger('common'));
 app.use(bodyParser.json());
 
 app.use('/*', allowCORSHandler);
-app.use(apiPrefix + '/*', authRequest);
+app.use(`${apiPrefix}/*`, authRequest
+  .unless({
+    path: [
+      `${apiPrefix}/${PING}`,
+      `${apiPrefix}/${apiVersion}/${PING}`
+    ]
+  })
+);
 app.use([apiPrefix + apiVersion, apiPrefix], routes);
 app.use(notFoundRequest);
 
@@ -50,12 +58,15 @@ if (process.argv.length > 3) {
 }
 
 // output process pid into a file
+// This argument works ONLY for linux.
+// Adding this argument only because at the moment cannot retreive a proper pid for the process
+// Should be moved away in the future
 if (process.argv.length > 4) {
   fs.writeFile(process.argv[4], process.pid);
 }
 
 // Start the server
 app.set('port', port);
-app.listen(app.get('port'), ip, function() {
-  console.log('WebService has started on %s:%s', ip, port);
+app.listen(app.get('port'), ip, () => {
+  console.log(`WebService has started on ${ip}:${port}`);
 });

@@ -1,28 +1,19 @@
-'use strict';
+import express from 'express';
 
-/* global module, require */
+import * as clients from './clients.js';
 
-var express = require('express'),
-    router = express.Router(),
-    config = require('../../config/config.json'),
-    clients = require('./clients.js');
+const router = express.Router();
 
-var ping = function(req, res) {
-  res.json({
-    message: 'pong'
-  });
-};
+router.get('/ping', (req, res) => res.json({ message: 'pong' }));
 
-router.get(config.pingUrl, ping);
-
-//Clients///////////////////////////////////
+// Clients -----------------------------------
 router.get([
   '/clients',
   '/clients/:clientid'
 ], clients.get);
 router.post('/clients', clients.create);
 router.put('/clients/:clientid', clients.update);
-router.delete('/clientid/:clientid', clients.delete);
-////////////////////////////////////////////
+router.delete('/clientid/:clientid', clients.remove);
+//---------------------------------------------
 
-module.exports = router;
+export default router;

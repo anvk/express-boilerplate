@@ -1,11 +1,8 @@
-/* global it, describe, require */
+import { expect } from 'chai';
 
-var chai = require('chai'),
-    expect = chai.expect;
+describe('utils tests', () => {
 
-describe('utils tests', function() {
-
-  it('meh', function() {
+  it('meh', () => {
     expect(true).to.be.true;
   });
 

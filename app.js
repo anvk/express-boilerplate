@@ -1,3 +1,5 @@
-/*global require*/
+'use strict';
 
-require('./server/server.js');
+/* global require */
+
+require('./server-dist/server.js');
